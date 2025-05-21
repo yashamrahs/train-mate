@@ -1,20 +1,26 @@
 package ticket.booking.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
+
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class Train {
     private String trainId;
     private String trainNumber;
-    private List<List<Integer>> seatLayout;
-    private Map<String, LocalTime> stationArrivalTimes;
+    private List<List<Integer>> seats;
+    private Map<String, String> stationArrivalTimes;
     private List<String> stations;
 
-    public Train(String trainId, String trainNumber, List<List<Integer>> seatLayout, Map<String, LocalTime> stationArrivalTimes, List<String> stations) {
+    public Train(String trainId, String trainNumber, List<List<Integer>> seats, Map<String, String> stationArrivalTimes, List<String> stations) {
         this.trainId = trainId;
         this.trainNumber = trainNumber;
-        this.seatLayout = seatLayout;
+        this.seats = seats;
         this.stationArrivalTimes = stationArrivalTimes;
         this.stations = stations;
     }
@@ -37,19 +43,19 @@ public class Train {
         this.trainNumber = trainNumber;
     }
 
-    public List<List<Integer>> getSeatLayout() {
-        return seatLayout;
+    public List<List<Integer>> getSeats() {
+        return seats;
     }
 
-    public void setSeatLayout(List<List<Integer>> seatLayout) {
-        this.seatLayout = seatLayout;
+    public void setSeats(List<List<Integer>> seats) {
+        this.seats = seats;
     }
 
-    public Map<String, LocalTime> getStationArrivalTimes() {
+    public Map<String, String> getStationArrivalTimes() {
         return stationArrivalTimes;
     }
 
-    public void setStationArrivalTimes(Map<String, LocalTime> stationArrivalTimes) {
+    public void setStationArrivalTimes(Map<String, String> stationArrivalTimes) {
         this.stationArrivalTimes = stationArrivalTimes;
     }
 

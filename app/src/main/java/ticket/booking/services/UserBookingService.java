@@ -2,6 +2,7 @@ package ticket.booking.services;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import ticket.booking.entities.Train;
 import ticket.booking.entities.User;
 import ticket.booking.util.UserServiceUtil;
 
@@ -45,7 +46,49 @@ public class UserBookingService {
         return foundUser.isPresent();
     }
 
+    public void fetchBookings() {
+        Optional<User> userFetched = usersList.stream().filter(u -> {
+            return u.getName() == user.getName() && UserServiceUtil.checkPassword(user.getPassword(), u.getPassword());
+        }).findFirst();
+
+        userFetched.ifPresent(User::printTickets);
+    }
+
+    public List<Train> searchTrains(String source, String destination) {
+        try {
+            TrainService trainService = new TrainService();
+            return trainService.searchTrains(source, destination);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<List<Integer>> findSeats(Train train) {
+        return train.getSeats();
+    }
+
+    public boolean bookTrainTicket(Train train, int row, int seat) {
+        try {
+            TrainService trainService = new TrainService();
+            List<List<Integer>> seats = train.getSeats();
+
+            if (row >= 0 && row < seats.size() && seat > 0 && seat < seats.get(row).size()) {
+                if (seats.get(row).get(seat) == 0) {
+                    seats.get(row).set(seat, 1);
+                    train.setSeats(seats);
+                    trainService.updateTrain(train);
+                    return true;
+                }
+            }
+
+            return false;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
     private void loadUserList() throws IOException {
+        System.out.println("Reading from: " + USERS_PATH);
         File users = new File(USERS_PATH);
         usersList = objectMapper.readValue(users, new TypeReference<List<User>>() {});
     }
@@ -54,6 +97,4 @@ public class UserBookingService {
         File users = new File(USERS_PATH);
         objectMapper.writeValue(users, usersList);
     }
-
-
 }
