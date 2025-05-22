@@ -76,6 +76,6 @@ public class Ticket {
     }
 
     public String getTicketInfo() {
-        return String.format("Ticket ID: %s belongs to User %s from %s to %s on %s", ticketId, userId, source, destination, travelDate);
+        return String.format("Ticket ID: %s is confirmed! From %s to %s on %s.", ticketId, source, destination, travelDate);
     }
 }

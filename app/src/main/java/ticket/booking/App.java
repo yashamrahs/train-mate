@@ -29,9 +29,6 @@ public class App {
             return;
         }
 
-        User currentUser = null;
-        boolean isRunning = true;
-
         System.out.println("Welcome to the Train Ticket Booking CLI!");
 
         while (!isLoggedIn) {
@@ -123,6 +120,15 @@ public class App {
                     String trainNo = scanner.nextLine();
                     Train selectedTrain = userBookingService.findTrain(trainNo);
 
+                    System.out.print("Enter booking date: ");
+                    String bookingDate = scanner.nextLine();
+
+                    System.out.print("Enter source station: ");
+                    String start = scanner.nextLine();
+
+                    System.out.print("Enter destination station: ");
+                    String end = scanner.nextLine();
+
                     if (selectedTrain != null) {
                         boolean booked = false;
                         while (!booked) {
@@ -137,7 +143,7 @@ public class App {
                             System.out.print("Enter column: ");
                             int col = scanner.nextInt();
 
-                            if (userBookingService.bookTrainTicket(selectedTrain, row, col)) {
+                            if (userBookingService.bookTrainTicket(userBookingService.getCurrentUser().getUserId(), start, end, bookingDate, selectedTrain, row, col)) {
                                 System.out.println("Seat booked successfully!");
                                 booked = true;
                             } else {
@@ -154,13 +160,18 @@ public class App {
 
                 case 3:
                     System.out.println("Fetching your bookings...");
-                    //userBookingService.fetchBookings();
-                    // TODO: add fetch booking
+                    userBookingService.fetchBookings();
                     break;
 
                 case 4:
-                    System.out.println("Cancel booking feature coming soon...");
-                    // TODO: Add cancel booking feature
+                    System.out.println("Enter the Ticket ID to cancel");
+                    String ticketId = scanner.nextLine();
+
+                    if (userBookingService.cancelTicket(ticketId)) {
+                        System.out.println("Ticket cancelled successfully");
+                    } else {
+                        System.out.println("Given ticket not found.");
+                    }
                     break;
 
                 case 5:
