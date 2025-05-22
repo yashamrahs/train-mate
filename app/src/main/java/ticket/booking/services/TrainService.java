@@ -70,4 +70,12 @@ public class TrainService {
 
         return sourceIndex != -1 && destinationIndex != -1 && sourceIndex < destinationIndex;
     }
+
+    public Train trainExist(String trainNumber) {
+        Optional<Train> findTrain = trainList.stream().filter(train -> {
+            return train.getTrainNumber().equals(trainNumber);
+        }).findFirst();
+
+        return findTrain.isPresent() ? findTrain.get() : null;
+    }
 }

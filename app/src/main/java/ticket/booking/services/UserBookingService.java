@@ -30,6 +30,7 @@ public class UserBookingService {
 
     public boolean signUp(User user) throws IOException {
         try {
+            this.user = user;
             usersList.add(user);
             saveUserList();
             return true;
@@ -38,12 +39,17 @@ public class UserBookingService {
         }
     }
 
-    public boolean login() {
+    public boolean login(String username, String password) {
         Optional<User> foundUser = usersList.stream().filter(u -> {
-            return u.getName().equals(user.getName()) && UserServiceUtil.checkPassword(user.getPassword(), u.getPassword());
+            return u.getName().equals(username) && UserServiceUtil.checkPassword(password, u.getHashedPassword());
         }).findFirst();
 
-        return foundUser.isPresent();
+        if (foundUser.isPresent()) {
+            this.user = foundUser.get();
+            return true;
+        }
+
+        return false;
     }
 
     public void fetchBookings() {
@@ -67,6 +73,16 @@ public class UserBookingService {
         return train.getSeats();
     }
 
+    public Train findTrain(String trainNumber) {
+        try {
+            TrainService trainService = new TrainService();
+            return trainService.trainExist(trainNumber);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
     public boolean bookTrainTicket(Train train, int row, int seat) {
         try {
             TrainService trainService = new TrainService();
@@ -88,7 +104,6 @@ public class UserBookingService {
     }
 
     private void loadUserList() throws IOException {
-        System.out.println("Reading from: " + USERS_PATH);
         File users = new File(USERS_PATH);
         usersList = objectMapper.readValue(users, new TypeReference<List<User>>() {});
     }
